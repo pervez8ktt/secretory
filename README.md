@@ -3,7 +3,7 @@
 ```code
 npx create-react-app my-app
 cd my-app
-npm 
+npm start
 ```
 
 [https://reactjs.org/docs/create-a-new-react-app.html](https://reactjs.org/docs/create-a-new-react-app.html)
@@ -15,6 +15,12 @@ npm
 npm install -g firebase-tools
 firebase login
 firebase init
+firebase deploy
 
 ```
 
+## React Build
+
+```code
+npm run build
+```
