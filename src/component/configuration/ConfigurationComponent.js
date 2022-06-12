@@ -1,95 +1,134 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Button, Container, Row } from 'react-bootstrap';
+import FormInput from '../../UI/form/FormInput';
+import FormSelect from '../../UI/form/FormSelect';
+import AddDeduction from './AddDeduction';
 
 const ConfigurationComponent = (props) => {
 
+
+    const addShowState = useState(true);
+
+    const [, setShowAdd] = addShowState;
+
+    const handleShowAdd = (e) => {
+        setShowAdd(true)
+    }
+
+    const saturdayOffOptions = [
+        {
+            value:1,
+            label:"All Saturday Off"
+        },{
+            value:2,
+            label:"Second and fourth Saturday Off"
+        },{
+            value:3,
+            label:"No Off"
+        },{
+            value:4,
+            label:"Other"
+        }
+    ]
+
     return <React.Fragment>
 
-        <div className='container'>
+
+        <AddDeduction addShowState={addShowState} />
+
+
+        <Container>
 
             <h1>Configuration</h1>
 
             <form>
 
-                <div className='row mb-2'>
+                <Row>
                     <div className='col-md-3'>
-                        <label for="salaryInput" className="form-label">Salary</label>
-                        <input type="number" className="form-control"/>
+
+                        <FormInput type="number" label="Salary"></FormInput>
+
+
                     </div>
                     <div className='col-md-3'>
-                        <label for="salaryInput" className="form-label">CL Per Month</label>
-                        <input type="number" className="form-control"/>
+                        <FormInput type="number" label="CL Per Month"></FormInput>
+
                     </div>
                     <div className='col-md-3'>
-                        <label for="salaryInput" className="form-label">Attendance Required for CL</label>
-                        <input type="number" className="form-control"/>
+
+                        <FormInput type="number" label="Attendance Required for CL"></FormInput>
+
+                        
                     </div>
 
                     <div className='col-md-3'>
-                    <label for="salaryInput" className="form-label">Seturday Off</label>
-                        <select class="form-select" aria-label="Default select example">
-                            <option selected>All Saturday Off</option>
-                            <option value="1">Second and third Saturday Off</option>
-                            <option value="1">No Off</option>
-                            <option value="2">Other</option>
-                            
-                        </select>
+                        <FormSelect label="Seturday Off" className="form-select" aria-label="Default select example" defaultValue={2}>
+                            <option value={1}>All Saturday Off</option>
+                            <option value={2}>Second and fourth Saturday Off</option>
+                            <option value={3}>No Off</option>
+                            <option value={4}>Other</option>
+
+                        </FormSelect>
                     </div>
 
-                    
 
-                </div>
-                <div className='row'>
-                        <div className='col-md-3'>
+
+                </Row>
+                <Row>
+                    <div className='col-md-3'>
                         <button className='btn btn-primary'>Submit</button>
-                        </div>
                     </div>
-                
+                </Row>
+
             </form>
-            <br/>
-            <br/>
-            
-            <div className='position-relative mt-1'>
-                <h2 className='position-absolute start-0'>Deductions</h2>
-                <button className='btn btn-primary position-absolute end-0'>Add</button>
-            </div>
-            
+            <br />
+            <br />
+
+
+            <h2>Deductions</h2>
+            <Button className='btn-primary' onClick={handleShowAdd}>
+                Add Deductions
+            </Button>
+
+
+
             <div className='mt-5'>
-            <table class="table">
-                <thead>
-                    <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Particular</th>
-                    <th scope="col">Amount/Per</th>
-                    <th scope="col">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                    <th scope="row">1</th>
-                    <td>PF</td>
-                    <td>3000</td>
-                    <td></td>
-                    </tr>
-                    <tr>
-                    <th scope="row">2</th>
-                    <td>Health</td>
-                    <td>1000</td>
-                    <td></td>
-                    </tr>
-                    <tr>
-                    <th scope="row">3</th>
-                    <td>Security</td>
-                    <td>1000</td>
-                    <td></td>
-                    </tr>
-                </tbody>
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Particular</th>
+                            <th scope="col">Amount/Per</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>PF</td>
+                            <td>3000</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>Health</td>
+                            <td>1000</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">3</th>
+                            <td>Security</td>
+                            <td>1000</td>
+                            <td></td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
-            
 
-        
 
-        </div>
+
+
+        </Container>
 
     </React.Fragment>
 }
