@@ -15,21 +15,7 @@ const ConfigurationComponent = (props) => {
         setShowAdd(true)
     }
 
-    const saturdayOffOptions = [
-        {
-            value:1,
-            label:"All Saturday Off"
-        },{
-            value:2,
-            label:"Second and fourth Saturday Off"
-        },{
-            value:3,
-            label:"No Off"
-        },{
-            value:4,
-            label:"Other"
-        }
-    ]
+    
 
     return <React.Fragment>
 

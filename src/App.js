@@ -1,15 +1,13 @@
-import logo from './logo.svg';
 import './App.css';
 import React from 'react';
-import ConfigurationComponent from './component/configuration/ConfigurationComponent';
+
+import AuthGoogle from './UI/authentication/AuthGoogle';
 
 function App() {
+
+  
   return (
-    <React.Fragment>
-
-        <ConfigurationComponent></ConfigurationComponent>
-
-    </React.Fragment>
+    <AuthGoogle></AuthGoogle>
   );
 }
 
