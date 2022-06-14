@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
+import { GoogleAuthProvider, getAuth, signInWithPopup, onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { propTypes } from "react-bootstrap/esm/Image";
 import SecureComponent from "../../component/SecureComponent";
@@ -19,22 +19,25 @@ const AuthGoogle = (props) => {
     const [token, setToken] = useState('');
     const { isLoading, error, sendRequest: sendTaskRequest } = useHttp();
 
+    const firebaseConfig = firebaseConfigInit
+
+    // Initialize Firebase
+
+    const app = initializeApp(firebaseConfig);
+
+    const auth = getAuth(app);
+
+    const provider = new GoogleAuthProvider(auth);
+    //provider.addScope('https://www.googleapis.com/auth/firebase.database');
+
+    provider.setCustomParameters({
+        'login_hint': 'user@example.com'
+    });
+
+
     useEffect(() => {
 
-        const firebaseConfig = firebaseConfigInit
 
-        // Initialize Firebase
-
-        const app = initializeApp(firebaseConfig);
-
-        const auth = getAuth(app);
-
-        const provider = new GoogleAuthProvider(auth);
-        //provider.addScope('https://www.googleapis.com/auth/firebase.database');
-
-        provider.setCustomParameters({
-            'login_hint': 'user@example.com'
-        });
 
         signInWithPopup(auth, provider)
             .then((result) => {
@@ -51,7 +54,7 @@ const AuthGoogle = (props) => {
 
                 sendTaskRequest(
                     {
-                        url: "/users/" + localId + "/user.json?access_token=" + token,
+                        url: "/users/" + localId + "/user.json",
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
@@ -62,7 +65,7 @@ const AuthGoogle = (props) => {
                         if (response == null) {
                             sendTaskRequest(
                                 {
-                                    url: '/users/' + localId + "/user.json?access_token=" + token,
+                                    url: '/users/' + localId + "/user.json",
                                     method: 'PUT',
                                     headers: {
                                         'Content-Type': 'application/json',
