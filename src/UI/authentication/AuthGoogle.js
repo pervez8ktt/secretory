@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { propTypes } from "react-bootstrap/esm/Image";
 import SecureComponent from "../../component/SecureComponent";
 import { firebaseConfigInit } from "../../firebase-config";
+import useHttp from "../http/useHttp";
 import AuthGoogleContext from "./auth-google-context";
 
 
@@ -14,34 +15,82 @@ const AuthGoogle = (props) => {
 
     const [isLogin, setIsLogin] = useState(false);
     const [email, setEmail] = useState('');
-
-    const firebaseConfig = firebaseConfigInit
-
-    // Initialize Firebase
-
-    const app = initializeApp(firebaseConfig);
-
-    const auth = getAuth(app);
-
-    const provider = new GoogleAuthProvider(auth);
-    //provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
-
-    provider.setCustomParameters({
-        'login_hint': 'user@example.com'
-    });
+    const [role, setRole] = useState('');
+    const [token, setToken] = useState('');
+    const { isLoading, error, sendRequest: sendTaskRequest } = useHttp();
 
     useEffect(() => {
+
+        const firebaseConfig = firebaseConfigInit
+
+        // Initialize Firebase
+
+        const app = initializeApp(firebaseConfig);
+
+        const auth = getAuth(app);
+
+        const provider = new GoogleAuthProvider(auth);
+        //provider.addScope('https://www.googleapis.com/auth/firebase.database');
+
+        provider.setCustomParameters({
+            'login_hint': 'user@example.com'
+        });
 
         signInWithPopup(auth, provider)
             .then((result) => {
                 // This gives you a Google Access Token. You can use it to access the Google API.
                 const credential = GoogleAuthProvider.credentialFromResult(result);
                 const token = credential.accessToken;
+                setToken(token)
                 // The signed-in user info.
                 const user = result.user;
-                setIsLogin(true);
+                const localId = user.reloadUserInfo.localId
+                console.info(user.reloadUserInfo.localId)
 
-                setEmail(user.email)
+                const _userObj = { role: 'user', ...user.reloadUserInfo }
+
+                sendTaskRequest(
+                    {
+                        url: "/users/" + localId + "/user.json?access_token=" + token,
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    },
+                    (response) => {
+                        console.info(response);
+                        if (response == null) {
+                            sendTaskRequest(
+                                {
+                                    url: '/users/' + localId + "/user.json?access_token=" + token,
+                                    method: 'PUT',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: _userObj,
+                                },
+                                (response) => {
+                                    console.info(response);
+                                    setIsLogin(true);
+                                    setRole('user')
+                                    setEmail(user.email)
+                                }
+                            );
+                        } else {
+                            setIsLogin(true);
+                            setEmail(user.email)
+                            setToken(token)
+                            setRole(response.role)
+                        }
+
+                    }
+                );
+
+
+                /**/
+
+
+
                 // ...
             }).catch((error) => {
                 // Handle Errors here.
@@ -68,7 +117,9 @@ const AuthGoogle = (props) => {
     return <AuthGoogleContext.Provider value={{
         user: email,
         logoutUser: logoutHandler,
-        isLogin: isLogin
+        isLogin: isLogin,
+        token: token,
+        role: role
     }}>
 
         {

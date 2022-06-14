@@ -4,7 +4,9 @@ const AuthGoogleContext = React.createContext(
     {
         user:null,
         logoutUser:null,
-        isLogin:false
+        isLogin:false,
+        token:null,
+        role:null
     }
 );
 

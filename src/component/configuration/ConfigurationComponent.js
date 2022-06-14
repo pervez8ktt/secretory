@@ -7,7 +7,7 @@ import AddDeduction from './AddDeduction';
 const ConfigurationComponent = (props) => {
 
 
-    const addShowState = useState(true);
+    const addShowState = useState(false);
 
     const [, setShowAdd] = addShowState;
 
