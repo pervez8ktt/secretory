@@ -17,6 +17,9 @@ const AuthGoogle = (props) => {
     const [email, setEmail] = useState('');
     const [role, setRole] = useState('');
     const [token, setToken] = useState('');
+    const [localId, setLocalId] = useState('');
+    const [accessToken, setAccessToken] = useState('');
+    const [authToken, setAuthToken] = useState('');
     const { isLoading, error, sendRequest: sendTaskRequest } = useHttp();
 
     const firebaseConfig = firebaseConfigInit
@@ -48,13 +51,12 @@ const AuthGoogle = (props) => {
                 // The signed-in user info.
                 const user = result.user;
                 const localId = user.reloadUserInfo.localId
-                console.info(user.reloadUserInfo.localId)
 
                 const _userObj = { role: 'user', ...user.reloadUserInfo }
 
                 sendTaskRequest(
                     {
-                        url: "/users/" + localId + "/user.json",
+                        url: "/users/" + localId + "/user.json?access_token=" + token + "&auth=" + auth.currentUser.accessToken,
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
@@ -65,7 +67,7 @@ const AuthGoogle = (props) => {
                         if (response == null) {
                             sendTaskRequest(
                                 {
-                                    url: '/users/' + localId + "/user.json",
+                                    url: '/users/' + localId + "/user.json?access_token=" + token + "&auth=" + auth.currentUser.accessToken,
                                     method: 'PUT',
                                     headers: {
                                         'Content-Type': 'application/json',
@@ -77,6 +79,9 @@ const AuthGoogle = (props) => {
                                     setIsLogin(true);
                                     setRole('user')
                                     setEmail(user.email)
+                                    setAccessToken(token)
+                                    setLocalId(localId)
+                                    setAuthToken(auth.currentUser.accessToken)
                                 }
                             );
                         } else {
@@ -84,6 +89,9 @@ const AuthGoogle = (props) => {
                             setEmail(user.email)
                             setToken(token)
                             setRole(response.role)
+                            setAccessToken(token)
+                            setLocalId(localId)
+                            setAuthToken(auth.currentUser.accessToken)
                         }
 
                     }
@@ -122,7 +130,10 @@ const AuthGoogle = (props) => {
         logoutUser: logoutHandler,
         isLogin: isLogin,
         token: token,
-        role: role
+        role: role,
+        localId: localId,
+        accessToken: accessToken,
+        authToken: authToken
     }}>
 
         {

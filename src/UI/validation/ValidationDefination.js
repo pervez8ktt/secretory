@@ -8,6 +8,16 @@ export const numberOnly = (_value) =>{
 
 }
 
+export const decimalOnly = (_value) =>{
+
+    if(/^\d+(\.\d+)?$/.test(_value)){
+       return true; 
+    }else{
+        return false;
+    }
+
+}
+
 export const required = (_value) => {
     if(_value==null || _value.trim()===''){
         return false;

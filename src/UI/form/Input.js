@@ -4,11 +4,22 @@ import ErrorMessage from "./ErrorMessage";
 
 const Input = (props) => {
 
+    
     const validationContext = useContext(ValidationContext)
 
     var className = props.className != null ? props.className : 'form-control'
     
-    const [value, setValue] = useState(props.value==null?'':props.value);
+    const _value = props.value==null?'':props.value;
+
+    
+    const [value, setValue] = useState(_value);
+    useEffect(()=>{
+        if(value!==_value){
+            setValue(_value)
+        }
+    },[])
+    
+    console.info("From input: "+value)
     const [isValid, setIsValid] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
     const [isInit, setIsInit] = useState(false);
