@@ -16,12 +16,6 @@ const Input = (props) => {
         
     },[_value])
 
-    
-    
-    
-    
-    
-    console.info("From input: "+value)
     const [isValid, setIsValid] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
     const [isInit, setIsInit] = useState(false);

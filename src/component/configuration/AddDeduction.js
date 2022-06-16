@@ -1,51 +1,71 @@
 import { useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
+import useDeduction from "../../data/useDeduction";
 import FormInput from "../../UI/form/FormInput";
 import FormSelect from "../../UI/form/FormSelect";
 import Validation from "../../UI/validation/Validation";
 
+const _formObject = {
+    isFormValid:false,
+    form:{
+        title:{
+            isValid:false,
+            value:'',
+            vtype:[
+                {
+                    type:'required',
+                    error:'Title is required'
+                }
+            ]
+        },dValue:{
+            isValid:false,
+            value:0,
+            vtype:[
+                {
+                    type:'required',
+                    error:'Value is required'
+                },{
+                    type:'vNum',
+                    error:'Value should be number only'
+                }
+            ]
+        },dType:{
+            isValid:true,
+            value:'amount'
+        }
+
+    }
+    
+}
+
 const AddDeduction = (props) => {
 
 
-    var _formObject = {
-        isFormValid:false,
-        form:{
-            title:{
-                isValid:false,
-                value:'',
-                vtype:[
-                    {
-                        type:'required',
-                        error:'Title is required'
-                    }
-                ]
-            },dValue:{
-                isValid:false,
-                value:0,
-                vtype:[
-                    {
-                        type:'required',
-                        error:'Value is required'
-                    },{
-                        type:'vNum',
-                        error:'Value should be number only'
-                    }
-                ]
-            },dType:{
-                isValid:true,
-                value:'amount'
-            }
+    const [formObject, setFormObject] = useState(_formObject);
 
+    //const { , localId ,sendRequest: sendTaskRequest } = useHttp();
+
+    const {isLoading, set} = useDeduction();
+
+    const lastIndex = props.lastIndex+1;
+    //const lastIndex = 0;
+
+    const handleOnSubmit = (e) => {
+        const _obj = {
+            lastIndex,
+            title: formObject.form.title.value,
+            dValue: formObject.form.dValue.value,
+            dType: formObject.form.dType.value
         }
+
+        set(_obj,(result)=>{
+            console.info(result);
+            props.hadleDeductionList()
+            handleClose();
+        });
         
     }
 
-
-    
-    const [formObject, setFormObject] = useState(_formObject);
-
-    console.info(formObject)
-    
     const [show, setShow] = props.addShowState;
 
     
@@ -78,7 +98,7 @@ const AddDeduction = (props) => {
                 <Button variant="secondary" onClick={handleClose}>
                     Close
                 </Button>
-                <Button disabled={!formObject.isFormValid?"disabled":''} variant="primary" onClick={handleClose}>
+                <Button disabled={ isLoading || !formObject.isFormValid?"disabled":''} variant="primary" onClick={handleOnSubmit}>
                     Save Changes
                 </Button>
             </Modal.Footer>

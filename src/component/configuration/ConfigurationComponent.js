@@ -1,11 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Button, Container, Row } from 'react-bootstrap';
+import useDeduction from '../../data/useDeduction';
 import AuthGoogleContext from '../../UI/authentication/auth-google-context';
 import FormInput from '../../UI/form/FormInput';
 import FormSelect from '../../UI/form/FormSelect';
 import useHttp from '../../UI/http/useHttp';
 import Validation from '../../UI/validation/Validation';
 import AddDeduction from './AddDeduction';
+import DeductionItem from './DeductionItem';
 
 const _configFormObj = {
 
@@ -67,24 +69,35 @@ const _configFormObj = {
 
 const ConfigurationComponent = (props) => {
 
-    
+    const { getList } = useDeduction();
 
     const [configFormObj, setConfigFormObj] = useState(_configFormObj);
     const addShowState = useState(false);
 
-    const authGoogleContext = useContext(AuthGoogleContext)
-    const localId = authGoogleContext.localId;
-    const token = authGoogleContext.token;
-    const authToken = authGoogleContext.authToken;
-    const { isLoading, error, localId: ld,sendRequest: sendTaskRequest } = useHttp();
-
-    console.info("localId: "+ld)
-
-    console.info(isLoading || !configFormObj.isFormValid)
+    const { isLoading, localId, sendRequest: sendTaskRequest } = useHttp();
 
     const [, setShowAdd] = addShowState;
-    
+
+    const [lastIndexDeduction, setLastIndexDeduction] = useState(-1);
+
+    const [deductionList, setDeductionList] = useState([]);
+
+    const hadleDeductionList=()=>{
+        getList((_result) => {
+            
+            const _l = _result.length-1;
+            setLastIndexDeduction(_l);
+
+
+
+            setDeductionList(_result)
+        });
+    }
+
     useEffect(() => {
+
+        hadleDeductionList();
+
         sendTaskRequest(
             {
                 url: '/configurations/' + localId + "/configuration.json",
@@ -95,17 +108,17 @@ const ConfigurationComponent = (props) => {
             },
             (response) => {
                 console.info(response);
-                if(response!=null){
-                    setConfigFormObj((_obj)=>{
-                        _obj.isFormValid=true
-                        _obj.form.salary.value=response.salary
-                        _obj.form.salary.isValid=true
-                        _obj.form.clPerMonth.value=response.clPerMonth
-                        _obj.form.clPerMonth.isValid=true
-                        _obj.form.attandanceReqForCl.value=response.attandanceReqForCl
-                        _obj.form.attandanceReqForCl.isValid=true
-                        _obj.form.saturdayOff.value=response.saturdayOff
-                        _obj.form.saturdayOff.isValid=true
+                if (response != null) {
+                    setConfigFormObj((_obj) => {
+                        _obj.isFormValid = true
+                        _obj.form.salary.value = response.salary
+                        _obj.form.salary.isValid = true
+                        _obj.form.clPerMonth.value = response.clPerMonth
+                        _obj.form.clPerMonth.isValid = true
+                        _obj.form.attandanceReqForCl.value = response.attandanceReqForCl
+                        _obj.form.attandanceReqForCl.isValid = true
+                        _obj.form.saturdayOff.value = response.saturdayOff
+                        _obj.form.saturdayOff.isValid = true
                         return _obj;
                     })
                 }
@@ -114,19 +127,11 @@ const ConfigurationComponent = (props) => {
         );
     }, [])
 
-    console.info(configFormObj)
-
-    
-
     const handleShowAdd = (e) => {
         setShowAdd(true)
     }
 
     const submitConfig = (e) => {
-
-
-
-
         const _obj = {
             salary: configFormObj.form.salary.value,
             clPerMonth: configFormObj.form.clPerMonth.value,
@@ -144,18 +149,19 @@ const ConfigurationComponent = (props) => {
                 body: _obj,
             },
             (response) => {
-                console.info(response);
-
+                
             }
         );
     }
 
-
+    const _deductionJsx = deductionList.map((_d,index)=>{
+        return <DeductionItem key={index} index={index} data={_d}></DeductionItem>
+    });
 
     return <React.Fragment>
 
 
-        <AddDeduction addShowState={addShowState} />
+        <AddDeduction lastIndex={lastIndexDeduction} addShowState={addShowState} hadleDeductionList={hadleDeductionList}/>
 
 
         <Container>
@@ -219,29 +225,16 @@ const ConfigurationComponent = (props) => {
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Particular</th>
+                            <th scope="col">Type</th>
                             <th scope="col">Amount/Per</th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>PF</td>
-                            <td>3000</td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">2</th>
-                            <td>Health</td>
-                            <td>1000</td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">3</th>
-                            <td>Security</td>
-                            <td>1000</td>
-                            <td></td>
-                        </tr>
+
+                        {_deductionJsx}
+
+                        
                     </tbody>
                 </table>
             </div>
