@@ -68,6 +68,7 @@ const AuthGoogle = (props) => {
                             sendTaskRequest(
                                 {
                                     url: '/users/' + localId + "/user.json?access_token=" + token + "&auth=" + auth.currentUser.accessToken,
+                                    
                                     method: 'PUT',
                                     headers: {
                                         'Content-Type': 'application/json',

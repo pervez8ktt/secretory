@@ -7,72 +7,87 @@ import useHttp from '../../UI/http/useHttp';
 import Validation from '../../UI/validation/Validation';
 import AddDeduction from './AddDeduction';
 
-const ConfigurationComponent = (props) => {
+const _configFormObj = {
 
-    var _configFormObj = {
-
-        isFormValid: false,
-        form: {
-            salary: {
-                isValid: false,
-                value: '',
-                vtype: [
-                    {
-                        type: 'required',
-                        error: 'Salary is required'
-                    }, {
-                        type: 'vDec',
-                        error: 'Salary should be in decimal'
-                    }
-                ]
-            },
-            clPerMonth: {
-                isValid: false,
-                value: 0,
-                vtype: [
-                    {
-                        type: 'required',
-                        error: 'CL Per Month is required'
-                    }, {
-                        type: 'vDec',
-                        error: 'CL Per Month should be number only'
-                    }
-                ]
-            },
-            attandanceReqForCl: {
-                isValid: false,
-                value: 0,
-                vtype: [
-                    {
-                        type: 'required',
-                        error: 'Attendance Required for CL is required'
-                    }, {
-                        type: 'vDec',
-                        error: 'Attendance Required for CL should be number only'
-                    }
-                ]
-            },
-            saturdayOff: {
-                isValid: true,
-                value: 2,
-                vtype: [
-                    {
-                        type: 'required',
-                        error: 'Saturday off is required'
-                    }
-                ]
-            }
-
+    isFormValid: false,
+    form: {
+        salary: {
+            isValid: false,
+            value: '',
+            vtype: [
+                {
+                    type: 'required',
+                    error: 'Salary is required'
+                }, {
+                    type: 'vDec',
+                    error: 'Salary should be in decimal'
+                }
+            ]
+        },
+        clPerMonth: {
+            isValid: false,
+            value: 0,
+            vtype: [
+                {
+                    type: 'required',
+                    error: 'CL Per Month is required'
+                }, {
+                    type: 'vDec',
+                    error: 'CL Per Month should be number only'
+                }
+            ]
+        },
+        attandanceReqForCl: {
+            isValid: false,
+            value: 0,
+            vtype: [
+                {
+                    type: 'required',
+                    error: 'Attendance Required for CL is required'
+                }, {
+                    type: 'vDec',
+                    error: 'Attendance Required for CL should be number only'
+                }
+            ]
+        },
+        saturdayOff: {
+            isValid: true,
+            value: 2,
+            vtype: [
+                {
+                    type: 'required',
+                    error: 'Saturday off is required'
+                }
+            ]
         }
 
     }
 
-    const [configFormObj, setConfigFormObj] = useState(_configFormObj);
+}
 
+const ConfigurationComponent = (props) => {
+
+    
+
+    const [configFormObj, setConfigFormObj] = useState(_configFormObj);
+    const addShowState = useState(false);
+
+    const authGoogleContext = useContext(AuthGoogleContext)
+    const localId = authGoogleContext.localId;
+    const token = authGoogleContext.token;
+    const authToken = authGoogleContext.authToken;
+    const { isLoading, error, localId: ld,sendRequest: sendTaskRequest } = useHttp();
+
+    console.info("localId: "+ld)
+
+    console.info(isLoading || !configFormObj.isFormValid)
+
+    const [, setShowAdd] = addShowState;
+    
     useEffect(() => {
         sendTaskRequest(
             {
-                url: '/configurations/' + localId + "/configuration.json?access_token=" + token + "&auth=" + authToken,
+                url: '/configurations/' + localId + "/configuration.json",
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -82,11 +97,15 @@ const ConfigurationComponent = (props) => {
                 console.info(response);
                 if(response!=null){
                     setConfigFormObj((_obj)=>{
+                        _obj.isFormValid=true
                         _obj.form.salary.value=response.salary
+                        _obj.form.salary.isValid=true
                         _obj.form.clPerMonth.value=response.clPerMonth
+                        _obj.form.clPerMonth.isValid=true
                         _obj.form.attandanceReqForCl.value=response.attandanceReqForCl
+                        _obj.form.attandanceReqForCl.isValid=true
                         _obj.form.saturdayOff.value=response.saturdayOff
-
+                        _obj.form.saturdayOff.isValid=true
                         return _obj;
                     })
                 }
@@ -97,17 +116,7 @@ const ConfigurationComponent = (props) => {
 
     console.info(configFormObj)
 
-    const addShowState = useState(false);
-
-    const authGoogleContext = useContext(AuthGoogleContext)
-    const localId = authGoogleContext.localId;
-    const token = authGoogleContext.token;
-    const authToken = authGoogleContext.authToken;
-    const { isLoading, error, sendRequest: sendTaskRequest } = useHttp();
-
-    console.info(isLoading || !configFormObj.isFormValid)
-
-    const [, setShowAdd] = addShowState;
+    
 
     const handleShowAdd = (e) => {
         setShowAdd(true)
@@ -127,7 +136,7 @@ const ConfigurationComponent = (props) => {
 
         sendTaskRequest(
             {
-                url: '/configurations/' + localId + "/configuration.json?access_token=" + token + "&auth=" + authToken,
+                url: '/configurations/' + localId + "/configuration.json",
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -173,7 +182,7 @@ const ConfigurationComponent = (props) => {
                     </div>
 
                     <div className='col-md-3'>
-                        <FormSelect name="saturdayOff" label="Seturday Off" className="form-select" aria-label="Default select example" defaultValue={configFormObj.form.saturdayOff.value}>
+                        <FormSelect name="saturdayOff" label="Seturday Off" className="form-select" aria-label="Default select example" value={configFormObj.form.saturdayOff.value}>
                             <option value={1}>All Saturday Off</option>
                             <option value={2}>Second and fourth Saturday Off</option>
                             <option value={3}>No Off</option>

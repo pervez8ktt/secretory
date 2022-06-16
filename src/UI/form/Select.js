@@ -4,11 +4,18 @@ import ErrorMessage from "./ErrorMessage";
 
 const Select = (props) => {
 
+    const [value, setValue] = useState('');
     const validationContext = useContext(ValidationContext)
 
     var className = props.className != null ? props.className : 'form-control'
     
-    const [value, setValue] = useState(props.value==null?'':props.value);
+    const _value = props.value==null?'':props.value
+
+    useEffect(()=>{
+        setValue(_value)
+    },[_value])
+
+    
     const [isValid, setIsValid] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
     const [isInit, setIsInit] = useState(false);
@@ -53,10 +60,10 @@ const Select = (props) => {
         }
     }
 
-    const defaultValue = props.defaultValue!=null?props.defaultValue:""
+    
 
     return <>
-        <select className={className} defaultValue={defaultValue} onChange={handleOnChange} onBlur={handleOnBlur}>
+        <select className={className} value={value} onChange={handleOnChange} onBlur={handleOnBlur}>
         {props.children}
     </select>
     <ErrorMessage isValid={isValid} errorMessage={errorMessage}/>
