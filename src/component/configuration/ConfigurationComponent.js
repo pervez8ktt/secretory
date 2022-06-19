@@ -121,33 +121,7 @@ const ConfigurationComponent = (props) => {
 
         });
 
-        /*sendTaskRequest(
-            {
-                url: '/configurations/' + localId + "/configuration.json",
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            },
-            (response) => {
-                console.info(response);
-                if (response != null) {
-                    setConfigFormObj((_obj) => {
-                        _obj.isFormValid = true
-                        _obj.form.salary.value = response.salary
-                        _obj.form.salary.isValid = true
-                        _obj.form.clPerMonth.value = response.clPerMonth
-                        _obj.form.clPerMonth.isValid = true
-                        _obj.form.attandanceReqForCl.value = response.attandanceReqForCl
-                        _obj.form.attandanceReqForCl.isValid = true
-                        _obj.form.saturdayOff.value = response.saturdayOff
-                        _obj.form.saturdayOff.isValid = true
-                        return _obj;
-                    })
-                }
-
-            }
-        );*/
+        
     }, [])
 
     const handleShowAdd = (e) => {
@@ -166,19 +140,7 @@ const ConfigurationComponent = (props) => {
 
         })
 
-        /*sendTaskRequest(
-            {
-                url: '/configurations/' + localId + "/configuration.json",
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: _obj,
-            },
-            (response) => {
-
-            }
-        );*/
+        
     }
 
     const _deductionJsx = deductionList.map((_d, index) => {
