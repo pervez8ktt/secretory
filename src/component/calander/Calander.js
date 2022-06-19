@@ -12,13 +12,14 @@ const Calander = (props) => {
 
     const { getListByYearAndMonth, set } = useHoliday();
 
-
     const currentDate = new Date();
-    
+
     const currentYear = currentDate.getFullYear();
     const [month, setMonth] = useState(currentDate.getMonth());
     const [year, setYear] = useState(currentYear);
     const [date, setDate] = useState(currentDate.getDate());
+    //    const [totalWorking, setTotalworking] = useState(0);
+
     currentDate.setDate(1)
 
     const [holidayList, setHolidayList] = useState();
@@ -28,21 +29,23 @@ const Calander = (props) => {
 
     useEffect(() => {
         updateHolidayHandler();
-    }, [month,year])
+    }, [month, year])
 
     const addHolidayShowState = useState(false);
 
     const [, showHolidayModal] = addHolidayShowState;
 
-    const addHoliday=((_date)=>{
+    const addHoliday = ((_date) => {
         showHolidayModal(true);
         setDate(_date)
-        
+
     })
 
     useEffect(() => {
         var dayRows = []
         const day = currentDate.getDay();
+
+        var _totalDays = 0;
 
         var d = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
         const daysInAMonth = d.getDate();
@@ -73,11 +76,16 @@ const Calander = (props) => {
                             isHoliday: false,
                             isFullDayLeave: false,
                             isHalfDayLeave: false,
+                            isWorking: true,
                             date: dt,
-                            addHoliday:addHoliday
+                            addHoliday: addHoliday
                         }
 
                         isOff(i, dt, _obj);
+
+                        if (_obj.isWorking) {
+                            _totalDays++;
+                        }
 
                         cols.push(<DateObject key={i} {..._obj} />);
                         dt++
@@ -102,11 +110,16 @@ const Calander = (props) => {
                                 isHoliday: false,
                                 isFullDayLeave: false,
                                 isHalfDayLeave: false,
-                                addHoliday:addHoliday,
+                                addHoliday: addHoliday,
+                                isWorking: true,
                                 date: dt
                             }
 
-                            isOff(i, dt,  _obj);
+                            isOff(i, dt, _obj);
+
+                            if (_obj.isWorking) {
+                                _totalDays++;
+                            }
 
                             cols.push(<DateObject key={i} {..._obj} />);
                             dt++
@@ -123,64 +136,68 @@ const Calander = (props) => {
         }
 
         setDayRowsS(dayRows);
+        props.setTotalworking(_totalDays);
 
-    }, [ configuration,holidayList])
+    }, [configuration, holidayList])
 
 
     const isOff = (_weekDay, dt, _obj) => {
 
-        /*
-        ,
-    isHoliday,
-    isFullDayLeave,
-    isHalfDayLeave*/
-
         if (configuration == null) {
-          return;  
+            return;
         }
 
-        if(holidayList){
+        if (holidayList) {
             let _h = holidayList[dt]
-            if(_h){
+            if (_h) {
                 _obj.isHoliday = _h.title
-            }else{
+                _obj.isWorking = false
+            } else {
                 _obj.isHoliday = false
+                
             }
         }
 
         const saturdayOff = configuration.saturdayOff;
         if (_weekDay === 0) {
-            _obj.isOff=true;
+            _obj.isOff = true;
+            _obj.isWorking = false
             return
-        }else{
-            _obj.isOff=false;
-            return
-        }
-    
-    
-        const weekIndex = Math.ceil((dt - 1 - _weekDay) / 7)
-    
-        if (saturdayOff === 1) {
-            _obj.isOff=true;
-            return
-            
-        } else if (saturdayOff === 2) {
-            if (weekIndex === 1 || weekIndex === 3) {
-                _obj.isOff=true;
-                return
-            } else {
-                _obj.isOff=false;
-                return
-            }
-    
         } else {
-            _obj.isOff=false;
-            return
-    
+            _obj.isOff = false;
         }
 
-        
-    
+        if (_weekDay === 6) {
+
+            const weekIndex = Math.ceil((dt - 1 - _weekDay) / 7)
+
+            if (saturdayOff === 1) {
+                _obj.isOff = true;
+                _obj.isWorking = false
+                return
+
+            } else if (saturdayOff === 2) {
+                if (weekIndex === 1 || weekIndex === 3) {
+                    _obj.isOff = true;
+                    _obj.isWorking = false
+                    return
+                } else {
+                    _obj.isOff = false;
+                    return
+                }
+
+            } else {
+                _obj.isOff = false;
+                return
+
+            }
+
+        }
+
+
+
+
+
     }
 
     const handleOnChange = (type, e) => {
@@ -199,10 +216,10 @@ const Calander = (props) => {
         yearOptions.push(opt);
     }
 
-    
+
 
     const updateHolidayHandler = () => {
-        getListByYearAndMonth({year:year,month:month},(_holidayList) => {
+        getListByYearAndMonth({ year: year, month: month }, (_holidayList) => {
             setHolidayList(_holidayList);
         })
     }

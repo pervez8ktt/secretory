@@ -19,11 +19,12 @@ const Dashboard = (props) => {
     const navigation = useNavigate();
 
     const [configuration, setConfiguration] = useState();
+    const [totalWorking, setTotalworking] = useState(0);
 
     
 
     useEffect(()=>{
-        setCalanderView(<Calander configuration={configuration} />)
+        setCalanderView(<Calander configuration={configuration} setTotalworking={setTotalworking}/>)
     }, [configuration])
 
     useEffect(() => {
@@ -44,7 +45,11 @@ const Dashboard = (props) => {
 
     return <>
         <Head title="Dashboard" />
-        
+        <Row>
+
+            <Col><p>Total Working</p><p>{totalWorking}</p></Col>
+
+        </Row>
 
         {calanderView}
         
