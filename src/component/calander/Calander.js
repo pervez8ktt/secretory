@@ -17,15 +17,15 @@ const Calander = (props) => {
     const { getListByYearAndMonth } = useHoliday();
     const { getListByYearAndMonth: getLeaveListByYearAndMonth } = useLeave();
 
-    const currentDate = new Date();
+    const _currentDate = new Date();
 
-    const currentYear = currentDate.getFullYear();
-    const [month, setMonth] = useState(currentDate.getMonth());
-    const [year, setYear] = useState(currentYear);
-    const [date, setDate] = useState(currentDate.getDate());
+    const _currentYear = _currentDate.getFullYear();
+    const [month, setMonth] = useState(_currentDate.getMonth());
+    const [year, setYear] = useState(_currentYear);
+    const [date, setDate] = useState(_currentDate.getDate());
     //    const [totalWorking, setTotalworking] = useState(0);
 
-    currentDate.setDate(1)
+    _currentDate.setDate(1)
 
     const [holidayList, setHolidayList] = useState();
 
@@ -61,6 +61,7 @@ const Calander = (props) => {
 
     useEffect(() => {
         var dayRows = []
+        const currentDate = new Date(year,month,1);
         const day = currentDate.getDay();
 
         var _totalDays = 0;
@@ -186,7 +187,7 @@ const Calander = (props) => {
         setTotalLeaves(_totalLeaves);
         setTotalHoliday(_totalHoliday)
 
-    }, [configuration, holidayList, leaveList])
+    }, [configuration, holidayList, leaveList, year, month])
 
 
     const isOff = (_weekDay, dt, _obj) => {
@@ -272,7 +273,7 @@ const Calander = (props) => {
 
     const yearOptions = [];
 
-    for (var i = currentYear; i > currentYear - 70; i--) {
+    for (var i = _currentYear; i > _currentYear - 70; i--) {
         let opt = <option key={i}>{i}</option>;
         yearOptions.push(opt);
     }
