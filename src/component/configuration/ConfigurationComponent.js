@@ -6,6 +6,7 @@ import FormInput from '../../UI/form/FormInput';
 import FormSelect from '../../UI/form/FormSelect';
 import useHttp from '../../UI/http/useHttp';
 import Validation from '../../UI/validation/Validation';
+import Head from '../head/Head';
 import AddDeduction from './AddDeduction';
 import DeductionItem from './DeductionItem';
 
@@ -160,7 +161,7 @@ const ConfigurationComponent = (props) => {
 
     return <React.Fragment>
 
-
+        <Head title="Configuration" />
         <AddDeduction lastIndex={lastIndexDeduction} addShowState={addShowState} hadleDeductionList={hadleDeductionList}/>
 
 

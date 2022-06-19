@@ -1,11 +1,18 @@
+import { Route, Routes } from "react-router-dom";
 import ConfigurationComponent from "./configuration/ConfigurationComponent";
+import Dashboard from "./Dashboard";
 
 
 const SecureComponent = (props) => {
 
     return <>
 
-        <ConfigurationComponent></ConfigurationComponent>
+        <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="configuration" element={<ConfigurationComponent />} />
+        </Routes>
+
+        
 
     </>
 
