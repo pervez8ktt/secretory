@@ -12,6 +12,7 @@ import AuthGoogleContext from "./auth-google-context";
 
 const AuthGoogle = (props) => {
 
+    const [configuration, setConfiguration] =  useState(null)
 
     const [isLogin, setIsLogin] = useState(false);
     const [email, setEmail] = useState('');
@@ -29,6 +30,10 @@ const AuthGoogle = (props) => {
     const app = initializeApp(firebaseConfig);
 
     const auth = getAuth(app);
+
+    const handleSetConfig = (_response) =>{
+        setConfiguration(_response)
+    }
 
     const provider = new GoogleAuthProvider(auth);
     //provider.addScope('https://www.googleapis.com/auth/firebase.database');
@@ -134,7 +139,9 @@ const AuthGoogle = (props) => {
         role: role,
         localId: localId,
         accessToken: accessToken,
-        authToken: authToken
+        authToken: authToken,
+        configuration:configuration,
+        setConfiguration:handleSetConfig
     }}>
 
         {

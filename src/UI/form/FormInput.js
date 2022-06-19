@@ -1,12 +1,12 @@
 import Input from "./Input";
 import Label from "./Label";
 
-const FormInput = (props) => {
+const FormInput = ({label ,...props}) => {
 
 
     return <>
 
-        <Label {...props} className='form-label'>{props.label}</Label>
+        <Label {...props} className='form-label'>{label}</Label>
         <Input {...props} className ='form-control'/>
 
     </>

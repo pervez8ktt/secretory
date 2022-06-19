@@ -181,7 +181,7 @@ const ConfigurationComponent = (props) => {
                             <option value={1}>All Saturday Off</option>
                             <option value={2}>Second and fourth Saturday Off</option>
                             <option value={3}>No Off</option>
-                            <option value={4}>Other</option>
+                            
 
                         </FormSelect>
                     </div>

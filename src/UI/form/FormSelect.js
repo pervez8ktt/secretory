@@ -1,13 +1,13 @@
 import Label from "./Label";
 import Select from "./Select";
 
-const FormSelect = (props) => {
+const FormSelect = ({label,...props}) => {
 
 
 
     return <>
 
-        <Label className="form-label">{props.label}</Label>
+        <Label className="form-label">{label}</Label>
         <Select className="form-select" {...props}>
             {props.children}
 

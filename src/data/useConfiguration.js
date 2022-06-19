@@ -1,28 +1,45 @@
-import { useCallback } from "react";
+import { useCallback, useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import AuthGoogleContext from "../UI/authentication/auth-google-context";
 import useHttp from "../UI/http/useHttp";
 
 const useConfiguration = () => {
 
+    const authGoogleContext = useContext(AuthGoogleContext);
+
+    const navigate =  useNavigate()
+
+    const configuration = authGoogleContext.configuration;
+    const setConfiguration = authGoogleContext.setConfiguration;
     const { isLoading, localId ,sendRequest: sendTaskRequest } = useHttp();
 
-    const getList = useCallback((_result) => {
+    const getList = (_result) => {
 
-        sendTaskRequest(
-            {
-                url: '/configurations/' + localId + "/configuration.json",
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
+        if(configuration!=null){
+            _result(configuration)
+        }else{
+            sendTaskRequest(
+                {
+                    url: '/configurations/' + localId + "/configuration.json",
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                },
+                (response) => {
+                    if(response==null){
+                        navigate("configuration")
+                        return;
+                    }
+                    console.info(response);
+                    setConfiguration(response);
+                    _result(response)
+                    
                 }
-            },
-            (response) => {
-                console.info(response);
-                _result(response)
-                
-            }
-        );
+            );
+        }
 
-    },[]);
+    };
 
     const set = useCallback(({
         salary,
@@ -49,6 +66,7 @@ const useConfiguration = () => {
             },
             (response) => {
                 console.info(response);
+                setConfiguration(response);
                 _result(response)
                 
             }
