@@ -6,7 +6,8 @@ const DateObject = ({
     isFullDayLeave,
     isHalfDayLeave,
     date,
-    addHoliday
+    addHoliday,
+    addLeave
 }) => {
 
     var _d = new Date();
@@ -22,14 +23,28 @@ const DateObject = ({
 
     }
 
+    if(isHalfDayLeave){
+        
+        _class = "bg-secondary"
+        _dText = isHalfDayLeave;
+    }
+
     if (isOff) {
         _class = "bg-danger"
         _dText = "Off";
     }
+
+    if(isFullDayLeave){
+        _class = "bg-danger"
+        _dText = isFullDayLeave;
+    }
+
     if (isHoliday) {
         _class = "bg-warning";
         _dText = isHoliday;
     }
+
+    
 
     _class = currentDateClass ? currentDateClass : _class;
 
@@ -37,11 +52,15 @@ const DateObject = ({
         addHoliday(date);
     }
 
+    const addLeaveHandler = () => {
+        addLeave(date);
+    }
+
     return <>
         <td className={_class}>
             <p>{date}</p>
             <p>{_dText}</p>
-            <button type="button" className={_btnClass} onClick={addHolidayHandler}>Holiday</button><button type="button" className={_btnClass}>Leave</button>
+            <button type="button" className={_btnClass} onClick={addHolidayHandler}>Holiday</button><button type="button" className={_btnClass} onClick={addLeaveHandler}>Leave</button>
         </td>
     </>
 

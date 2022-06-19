@@ -2,15 +2,18 @@ import { useEffect, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import useConfiguration from "../../data/useConfiguration";
 import useHoliday from "../../data/useHoliday";
+import useLeave from "../../data/useLeave";
 import FormSelect from "../../UI/form/FormSelect";
 import Holiday from "../holiday/Holiday";
+import Leave from "../leave/Leave";
 import DateObject from "./DateObject";
 
 const Calander = (props) => {
 
     const configuration = props.configuration;
 
-    const { getListByYearAndMonth, set } = useHoliday();
+    const { getListByYearAndMonth } = useHoliday();
+    const { getListByYearAndMonth: getLeaveListByYearAndMonth } = useLeave();
 
     const currentDate = new Date();
 
@@ -23,20 +26,33 @@ const Calander = (props) => {
     currentDate.setDate(1)
 
     const [holidayList, setHolidayList] = useState();
+
+    const [leaveList, setLeaveList] = useState();
     const [holidayTitle, setHolidayTitle] = useState('');
 
     const [dayRowsS, setDayRowsS] = useState([])
 
     useEffect(() => {
         updateHolidayHandler();
+        updateLeaveHandler();
     }, [month, year])
 
     const addHolidayShowState = useState(false);
 
     const [, showHolidayModal] = addHolidayShowState;
 
+    const addLeaveShowState = useState(false);
+
+    const [, showLeaveModal] = addLeaveShowState;
+
     const addHoliday = ((_date) => {
         showHolidayModal(true);
+        setDate(_date)
+
+    })
+
+    const addLeave = ((_date) => {
+        showLeaveModal(true);
         setDate(_date)
 
     })
@@ -78,13 +94,19 @@ const Calander = (props) => {
                             isHalfDayLeave: false,
                             isWorking: true,
                             date: dt,
-                            addHoliday: addHoliday
+                            addHoliday: addHoliday,
+                            addLeave
                         }
 
                         isOff(i, dt, _obj);
 
                         if (_obj.isWorking) {
-                            _totalDays++;
+                            if(_obj.isHalfDayLeave){
+                                _totalDays+=0.5;
+                            }else{
+                                _totalDays++;
+                            }
+                            
                         }
 
                         cols.push(<DateObject key={i} {..._obj} />);
@@ -111,6 +133,7 @@ const Calander = (props) => {
                                 isFullDayLeave: false,
                                 isHalfDayLeave: false,
                                 addHoliday: addHoliday,
+                                addLeave,
                                 isWorking: true,
                                 date: dt
                             }
@@ -118,7 +141,12 @@ const Calander = (props) => {
                             isOff(i, dt, _obj);
 
                             if (_obj.isWorking) {
-                                _totalDays++;
+                                if(_obj.isHalfDayLeave){
+                                    _totalDays+=0.5;
+                                }else{
+                                    _totalDays++;
+                                }
+                                
                             }
 
                             cols.push(<DateObject key={i} {..._obj} />);
@@ -138,7 +166,7 @@ const Calander = (props) => {
         setDayRowsS(dayRows);
         props.setTotalworking(_totalDays);
 
-    }, [configuration, holidayList])
+    }, [configuration, holidayList, leaveList])
 
 
     const isOff = (_weekDay, dt, _obj) => {
@@ -154,7 +182,20 @@ const Calander = (props) => {
                 _obj.isWorking = false
             } else {
                 _obj.isHoliday = false
-                
+
+            }
+        }
+
+        if (leaveList) {
+            let _h = leaveList[dt]
+            if (_h) {
+                if (_h.leaveType === 'Full-day') {
+                    _obj.isFullDayLeave = _h.title
+                    _obj.isWorking = false
+                } else if (_h.leaveType === 'Half-day') {
+                    _obj.isHalfDayLeave = _h.title
+                }
+
             }
         }
 
@@ -224,8 +265,15 @@ const Calander = (props) => {
         })
     }
 
+    const updateLeaveHandler = () => {
+        getLeaveListByYearAndMonth({ year: year, month: month }, (_leaveList) => {
+            setLeaveList(_leaveList);
+        })
+    }
+
     return <>
         <Holiday addShowState={addHolidayShowState} date={date} month={month} year={year} updateHolidayHandler={updateHolidayHandler} />
+        <Leave addShowState={addLeaveShowState} date={date} month={month} year={year} updateHolidayHandler={updateLeaveHandler} />
         <Row>
             <Col md={6}>
                 <FormSelect label={"Month"} value={month} onChange={handleOnChange.bind(this, 'month')}>
