@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Button, Container, Row } from 'react-bootstrap';
+import useConfiguration from '../../data/useConfiguration';
 import useDeduction from '../../data/useDeduction';
 import AuthGoogleContext from '../../UI/authentication/auth-google-context';
 import FormInput from '../../UI/form/FormInput';
@@ -72,12 +73,12 @@ const ConfigurationComponent = (props) => {
 
     const { getList } = useDeduction();
 
-    
+    const { isLoading, getList: getConfigList, set } = useConfiguration();
 
     const [configFormObj, setConfigFormObj] = useState(_configFormObj);
     const addShowState = useState(false);
 
-    const { isLoading, localId, sendRequest: sendTaskRequest } = useHttp();
+    //const { isLoading, localId, sendRequest: sendTaskRequest } = useHttp();
 
     const [, setShowAdd] = addShowState;
 
@@ -85,10 +86,10 @@ const ConfigurationComponent = (props) => {
 
     const [deductionList, setDeductionList] = useState([]);
 
-    const hadleDeductionList=()=>{
+    const hadleDeductionList = () => {
         getList((_result) => {
-            
-            const _l = _result.length-1;
+
+            const _l = _result.length - 1;
             setLastIndexDeduction(_l);
 
 
@@ -101,7 +102,26 @@ const ConfigurationComponent = (props) => {
 
         hadleDeductionList();
 
-        sendTaskRequest(
+        getConfigList((response) => {
+            console.info(response);
+            if (response != null) {
+                setConfigFormObj((_obj) => {
+                    _obj.isFormValid = true
+                    _obj.form.salary.value = response.salary
+                    _obj.form.salary.isValid = true
+                    _obj.form.clPerMonth.value = response.clPerMonth
+                    _obj.form.clPerMonth.isValid = true
+                    _obj.form.attandanceReqForCl.value = response.attandanceReqForCl
+                    _obj.form.attandanceReqForCl.isValid = true
+                    _obj.form.saturdayOff.value = response.saturdayOff
+                    _obj.form.saturdayOff.isValid = true
+                    return _obj;
+                })
+            }
+
+        });
+
+        /*sendTaskRequest(
             {
                 url: '/configurations/' + localId + "/configuration.json",
                 method: 'GET',
@@ -127,7 +147,7 @@ const ConfigurationComponent = (props) => {
                 }
 
             }
-        );
+        );*/
     }, [])
 
     const handleShowAdd = (e) => {
@@ -142,7 +162,11 @@ const ConfigurationComponent = (props) => {
             saturdayOff: configFormObj.form.saturdayOff.value
         }
 
-        sendTaskRequest(
+        set(_obj,(response)=>{
+
+        })
+
+        /*sendTaskRequest(
             {
                 url: '/configurations/' + localId + "/configuration.json",
                 method: 'PUT',
@@ -152,19 +176,19 @@ const ConfigurationComponent = (props) => {
                 body: _obj,
             },
             (response) => {
-                
+
             }
-        );
+        );*/
     }
 
-    const _deductionJsx = deductionList.map((_d,index)=>{
+    const _deductionJsx = deductionList.map((_d, index) => {
         return <DeductionItem key={index} index={index} data={_d}></DeductionItem>
     });
 
     return <React.Fragment>
 
         <Head title="Configuration" />
-        <AddDeduction lastIndex={lastIndexDeduction} addShowState={addShowState} hadleDeductionList={hadleDeductionList}/>
+        <AddDeduction lastIndex={lastIndexDeduction} addShowState={addShowState} hadleDeductionList={hadleDeductionList} />
 
 
         <Container>
@@ -237,7 +261,7 @@ const ConfigurationComponent = (props) => {
 
                         {_deductionJsx}
 
-                        
+
                     </tbody>
                 </table>
             </div>
