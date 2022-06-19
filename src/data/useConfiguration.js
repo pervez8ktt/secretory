@@ -28,7 +28,7 @@ const useConfiguration = () => {
                 },
                 (response) => {
                     if(response==null){
-                        navigate("configuration")
+                        navigate("/configuration")
                         return;
                     }
                     console.info(response);
