@@ -86,7 +86,7 @@ const AddDeduction = (props) => {
                 <Validation setFormObject={setFormObject} formObject={formObject}>
 
                     <FormInput type="text" label="Title" placeholder="Enter deduction title" name="title"/>
-                    <FormSelect label="Deduction type" name="dType">
+                    <FormSelect label="Deduction type" name="dType" value={formObject.form.dType.value}>
                         <option value="amount">Amount</option>
                         <option value="percentage">Percentage</option>
                     </FormSelect>

@@ -72,6 +72,8 @@ const ConfigurationComponent = (props) => {
 
     const { getList } = useDeduction();
 
+    
+
     const [configFormObj, setConfigFormObj] = useState(_configFormObj);
     const addShowState = useState(false);
 
