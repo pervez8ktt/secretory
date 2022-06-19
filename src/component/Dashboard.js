@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Col, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import useConfiguration from "../data/useConfiguration"
 import useHoliday from "../data/useHoliday";
@@ -20,39 +20,47 @@ const Dashboard = (props) => {
 
     const [configuration, setConfiguration] = useState();
     const [totalWorking, setTotalworking] = useState(0);
+    const [totalLeaves, setTotalLeaves] = useState(0);
+    const [totalHoliday, setTotalHoliday] = useState(0);
 
-    
 
-    useEffect(()=>{
-        setCalanderView(<Calander configuration={configuration} setTotalworking={setTotalworking}/>)
+
+
+    useEffect(() => {
+        setCalanderView(<Calander configuration={configuration} setTotalworking={setTotalworking} setTotalLeaves={setTotalLeaves} setTotalHoliday={setTotalHoliday} />)
     }, [configuration])
 
     useEffect(() => {
         getConfigList((response) => {
             if (response == null) {
                 navigation("configuration")
-            }else{
+            } else {
                 setConfiguration(response);
-                
-                
+
+
             }
         });
-    },[])
+    }, [])
 
-    
-    
-    
+
+
+
 
     return <>
         <Head title="Dashboard" />
-        <Row>
 
-            <Col><p>Total Working</p><p>{totalWorking}</p></Col>
+        <br />
+        <Row className="px-md-4">
+
+            <Col className="btn btn-primary" md={2}><p>Total Working</p><p>{totalWorking}</p></Col>
+            <Col className="btn btn-danger" md={2}><p>Total Leaves</p><p>{totalLeaves}</p></Col>
+            <Col className="btn btn-warning" md={2}><p>Total Holiday</p><p>{totalHoliday}</p></Col>
 
         </Row>
-
+        <br />
         {calanderView}
-        
+
+
 
     </>
 }

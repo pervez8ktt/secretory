@@ -11,6 +11,8 @@ import DateObject from "./DateObject";
 const Calander = (props) => {
 
     const configuration = props.configuration;
+    const setTotalLeaves = props.setTotalLeaves;
+    const setTotalHoliday = props.setTotalHoliday;
 
     const { getListByYearAndMonth } = useHoliday();
     const { getListByYearAndMonth: getLeaveListByYearAndMonth } = useLeave();
@@ -62,6 +64,8 @@ const Calander = (props) => {
         const day = currentDate.getDay();
 
         var _totalDays = 0;
+        var _totalLeaves = 0;
+        var _totalHoliday = 0;
 
         var d = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
         const daysInAMonth = d.getDate();
@@ -101,12 +105,19 @@ const Calander = (props) => {
                         isOff(i, dt, _obj);
 
                         if (_obj.isWorking) {
-                            if(_obj.isHalfDayLeave){
-                                _totalDays+=0.5;
-                            }else{
+                            if (_obj.isHalfDayLeave) {
+                                _totalDays += 0.5;
+                                _totalLeaves += 0.5
+                            } else {
                                 _totalDays++;
                             }
-                            
+
+                        } else {
+                            if (_obj.isFullDayLeave) {
+                                _totalLeaves += 1
+                            } else if (_obj.isHoliday) {
+                                _totalHoliday += 1;
+                            }
                         }
 
                         cols.push(<DateObject key={i} {..._obj} />);
@@ -141,12 +152,19 @@ const Calander = (props) => {
                             isOff(i, dt, _obj);
 
                             if (_obj.isWorking) {
-                                if(_obj.isHalfDayLeave){
-                                    _totalDays+=0.5;
-                                }else{
+                                if (_obj.isHalfDayLeave) {
+                                    _totalDays += 0.5;
+                                    _totalLeaves += 0.5
+                                } else {
                                     _totalDays++;
                                 }
-                                
+
+                            } else {
+                                if (_obj.isFullDayLeave) {
+                                    _totalLeaves += 1
+                                } else if (_obj.isHoliday) {
+                                    _totalHoliday += 1;
+                                }
                             }
 
                             cols.push(<DateObject key={i} {..._obj} />);
@@ -165,6 +183,8 @@ const Calander = (props) => {
 
         setDayRowsS(dayRows);
         props.setTotalworking(_totalDays);
+        setTotalLeaves(_totalLeaves);
+        setTotalHoliday(_totalHoliday)
 
     }, [configuration, holidayList, leaveList])
 
@@ -274,7 +294,22 @@ const Calander = (props) => {
     return <>
         <Holiday addShowState={addHolidayShowState} date={date} month={month} year={year} updateHolidayHandler={updateHolidayHandler} />
         <Leave addShowState={addLeaveShowState} date={date} month={month} year={year} updateHolidayHandler={updateLeaveHandler} />
-        <Row>
+        <p className="px-md-2">Legends</p>
+        <Row className="px-md-4">
+            <Col md={2} className=" bg-danger d-flex justify-content-center align-items-center">
+                <p >Full Day Leave</p>
+
+            </Col>
+            <Col md={2} className="px-md-2 bg-secondary d-flex justify-content-center align-items-center">
+                <p >Half Day Leave</p>
+
+            </Col>
+            <Col md={2} className="px-md-2 bg-warning d-flex justify-content-center align-items-center">
+                <p>Holiday</p>
+            </Col>
+        </Row>
+
+        <Row className="px-md-4">
             <Col md={6}>
                 <FormSelect label={"Month"} value={month} onChange={handleOnChange.bind(this, 'month')}>
                     <option key={0} value="0">January</option>
@@ -299,26 +334,31 @@ const Calander = (props) => {
 
             </Col>
         </Row>
+        <br />
+        <Row>
+            <Col>
 
-        <table className="table">
-            <thead>
-                <tr>
-                    <th scope="col">Sunday</th>
-                    <th scope="col">Monday</th>
-                    <th scope="col">Tuesday</th>
-                    <th scope="col">Wednesday</th>
-                    <th scope="col">Thrusday</th>
-                    <th scope="col">Friday</th>
-                    <th scope="col">Saturday</th>
-                </tr>
-            </thead>
-            <tbody>
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Sunday</th>
+                            <th scope="col">Monday</th>
+                            <th scope="col">Tuesday</th>
+                            <th scope="col">Wednesday</th>
+                            <th scope="col">Thrusday</th>
+                            <th scope="col">Friday</th>
+                            <th scope="col">Saturday</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-                {dayRowsS}
+                        {dayRowsS}
 
-            </tbody>
-        </table>
-
+                    </tbody>
+                </table>
+            </Col>
+            
+        </Row>
     </>
 }
 
