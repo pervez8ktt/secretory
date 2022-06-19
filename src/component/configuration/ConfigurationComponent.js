@@ -130,10 +130,10 @@ const ConfigurationComponent = (props) => {
 
     const submitConfig = (e) => {
         const _obj = {
-            salary: configFormObj.form.salary.value,
-            clPerMonth: configFormObj.form.clPerMonth.value,
-            attandanceReqForCl: configFormObj.form.attandanceReqForCl.value,
-            saturdayOff: configFormObj.form.saturdayOff.value
+            salary: parseFloat(configFormObj.form.salary.value),
+            clPerMonth: parseFloat(configFormObj.form.clPerMonth.value),
+            attandanceReqForCl: parseFloat(configFormObj.form.attandanceReqForCl.value),
+            saturdayOff: parseInt(configFormObj.form.saturdayOff.value)
         }
 
         set(_obj,(response)=>{
