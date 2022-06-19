@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useConfiguration from "../data/useConfiguration"
+import Calander from "./calander/Calander";
 import Head from "./head/Head"
 
 const Dashboard = (props) => {
@@ -15,10 +16,11 @@ const Dashboard = (props) => {
                 navigation("configuration")
             }
         });
-    })
+    },[])
 
     return <>
         <Head title="Dashboard" />
+        <Calander/>
 
     </>
 }
